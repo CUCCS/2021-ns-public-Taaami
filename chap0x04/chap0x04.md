@@ -7,10 +7,12 @@
 - 掌握网络监听的检测和防范
 ## 实验环境
 - VirtualBox 6.1 虚拟机
+
     ![虚拟机](./img/vb.png)
 - 网关（Gateway）：`Debian Buster`
 - 攻击者主机（Attacker）：`Kali Rolling 2109.2`
 - 靶机（Victim）：`Kali Rolling 2109.2`
+
     ![网络拓扑图](./img/exp-vb-layout.png)
 
     |  身份 |名称|  IP地址 |  MAC地址 |
@@ -26,6 +28,7 @@
 - [x] 实验四（可选）：基于 `scapy` 编写 `ARP` 投毒劫持工具
 ## 实验准备
 1. 按照网络拓扑图，配置虚拟机网卡，配置实验环境
+
     ![ip\mac](./img/ip&mac.png)
 2. 在攻击者主机`Attacker-Kali`上安装好 `scapy`（Kali自带可不安装）
     ```bash
@@ -106,6 +109,7 @@
     link/ether 08:00:27:f4:99:ae brd ff:ff:ff:ff:ff:ff
     ```
 6. 比较总结
+
     ![混杂模式对比](./img/promisc.png)
     *promiscping : Send ARP who-has requests to determine which hosts are in promiscuous mode*
     **对比：**
@@ -150,8 +154,10 @@
     .
     Sent 1 packets.
     ```
+
     ![scapy命令](./img/scapy.png)
 2. 在受害者主机查看`ARP`缓存
+
     ![伪造成功](./img/arp伪造.png)
 3. 在攻击者主机执行命令，恢复`ARP`缓存
     ```bash
@@ -162,6 +168,7 @@
     Sent 100 packets.
     ```
 4. 在受害者主机查看`ARP`缓存
+
     ![恢复成功](./img/arp恢复.png)
 ### 实验三（可选）：使用自动化工具完成 `ARP` 投毒劫持实验
 ### 实验四（可选）：基于 `scapy` 编写 `ARP` 投毒劫持工具
