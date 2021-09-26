@@ -183,7 +183,11 @@
 原因：没有用以太网封装
 解决：命令改为`rpspoofed=Ether()/ARP(op=2, psrc="172.16.111.1", pdst="172.16.111.126", hwdst="08:00:27:24:e9:f9")`
 ## 参考资料
+
 [1] [18信安前辈的实验报告](https://github.com/CUCCS/2020-ns-public-kate123wong/tree/chap0x04/chap0x04)
+
 [2] [在线教材-第四章 网络监听实验](https://c4pr1c3.github.io/cuc-ns/chap0x04/exp.html)
+
 [3] [混杂模式介绍_实践求真知-CSDN博客_混杂模式](https://blog.csdn.net/chengqiuming/article/details/89603272)
+
 [4] [Scapy常用操作和命令(1)_Han的小站-CSDN博客](https://blog.csdn.net/qwertyupoiuytr/article/details/54670641)
