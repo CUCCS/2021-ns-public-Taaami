@@ -217,20 +217,20 @@
     ![代码成功](./img/py.png)
 ## 问题及解决
 1. `scapy`执行命令`pkt = promiscping("172.16.111.112")`时报错
-原因：报错为`permission denied`说明是权限不足
-解决：启动`scapy`时升级权限`sudo scapy`
+    原因：报错为`permission denied`说明是权限不足
+    解决：启动`scapy`时升级权限`sudo scapy`
 2. 执行`pkt = promiscping("xxx")`时，开不开混杂模式没有区别，两次输出一样结果
-原因：`ip地址`写错了，不是`Attacker-Kali`的地址
-解决：写对`ip地址`...
+    原因：`ip地址`写错了，不是`Attacker-Kali`的地址
+    解决：写对`ip地址`...
 3. `arpspoofed=ARP(xxx)`伪造网关的`ARP`响应包时不成功，受害者`ARP`没有改变
-原因：没有用以太网封装
-解决：命令改为`rpspoofed=Ether()/ARP(op=2, psrc="172.16.111.1", pdst="172.16.111.126", hwdst="08:00:27:24:e9:f9")`
+    原因：没有用以太网封装
+    解决：命令改为`rpspoofed=Ether()/ARP(op=2, psrc="172.16.111.1", pdst="172.16.111.126", hwdst="08:00:27:24:e9:f9")`
 4. 实验三时虚拟机无法联网，`apt-get update`等命令报错
-原因：只开了攻击者和受害者主机，没有打开网关
-解决：三个主机同时开启
+    原因：只开了攻击者和受害者主机，没有打开网关
+    解决：三个主机同时开启
 5. 报错`arpspoof: libnet_open_link(): UID/EUID 0 or cap`
-原因：权限不足
-结局：语句前加`sudo`
+    原因：权限不足
+    结局：语句前加`sudo`
 ## 参考资料
 
 [1] [18信安前辈的实验报告](https://github.com/CUCCS/2020-ns-public-kate123wong/tree/chap0x04/chap0x04)
