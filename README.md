@@ -16,6 +16,7 @@
 |  网关               |  Gateway-Debian |172.16.111.1/24    |08:00:27:53:e0:03   |
 |  攻击者主机(扫描)    |  Attacker-Kali  |172.16.111.109/24  | 08:00:27:bc:65:6a   |
 |  受害者主机(被扫描)  |  Victim-Kali    |172.16.111.145/24  |08:00:27:77:94:9e  |
+
 ![虚拟机](./img/vb.png)
 ![拓扑](./img/layout.png)
 ## 实验要求
@@ -57,7 +58,8 @@ sudo nmap -sU -p 53 172.16.111.145
 `ufw enable && ufw deny 53/udp`
 ### TCP connect scan
 - 原理
-![connect](./img/connect.png)
+
+    ![connect](./img/connect.png)
 - 扫描代码[TCP-connect.py](./code/TCP-connect.py)
     ```python
     import logging
@@ -109,7 +111,8 @@ sudo nmap -sU -p 53 172.16.111.145
 
 ### TCP stealth scan
 - 原理
-![stealth](./img/stealth.png)
+
+    ![stealth](./img/stealth.png)
 - 扫描代码[TCP-stealth.py](./code/TCP-stealth.py)
     ```python
     import logging
@@ -165,7 +168,8 @@ sudo nmap -sU -p 53 172.16.111.145
 ![stealth-open-nmap](./img/stealth-filtered-nmap.png)
 ### TCP Xmas scan 
 - 原理
-![Xmas](./img/Xmas.png)
+    
+    ![Xmas](./img/Xmas.png)
 - 扫描代码[TCP-Xmas.py](./code/TCP-Xmas.py)
     ```python
     import logging
@@ -215,7 +219,8 @@ sudo nmap -sU -p 53 172.16.111.145
 ![Xmas-filtered-nmap](./img/Xmas-filtered-nmap.png)
 ### TCP fin scan 
 - 原理
-![fin](./img/fin.png)
+    
+    ![fin](./img/fin.png)
 - 扫描代码[TCP-fin.py](./code/TCP-fin.py)
     ```python
     import logging
@@ -266,7 +271,8 @@ sudo nmap -sU -p 53 172.16.111.145
 
 ### TCP null scan
 - 原理
-![null](./img/null.png)
+    
+    ![null](./img/null.png)
 - 扫描代码[TCP-null.py](./code/TCP-null.py)
     ```python
     import logging
@@ -316,7 +322,8 @@ sudo nmap -sU -p 53 172.16.111.145
 ![null-filtered-nmap](./img/null-filtered-nmap.png)
 ### UDP scan
 - 原理
-![UDP](./img/UDP.png)
+    
+    ![UDP](./img/UDP.png)
 - 扫描代码[UDP-scan.py](./code/UDP-scan.py)
     ```python
     import logging
