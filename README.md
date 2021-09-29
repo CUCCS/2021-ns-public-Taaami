@@ -1,4 +1,36 @@
-[toc]
+- [CHAP0x05 基于Scapy编写端口扫描器](#chap0x05-基于scapy编写端口扫描器)
+  - [实验目的](#实验目的)
+  - [实验环境](#实验环境)
+  - [实验要求](#实验要求)
+  - [实验过程](#实验过程)
+    - [实验准备](#实验准备)
+    - [端口状态模拟](#端口状态模拟)
+    - [TCP connect scan](#tcp-connect-scan)
+      - [CLOSED](#closed)
+      - [OPEN](#open)
+      - [FILTERED](#filtered)
+    - [TCP stealth scan](#tcp-stealth-scan)
+      - [CLOSED](#closed-1)
+      - [OPEN](#open-1)
+      - [FILTERED](#filtered-1)
+    - [TCP Xmas scan](#tcp-xmas-scan)
+      - [CLOSED](#closed-2)
+      - [OPEN](#open-2)
+      - [FILTERED](#filtered-2)
+    - [TCP fin scan](#tcp-fin-scan)
+      - [CLOSED](#closed-3)
+      - [OPEN](#open-3)
+      - [FILTERED](#filtered-3)
+    - [TCP null scan](#tcp-null-scan)
+      - [CLOSED](#closed-4)
+      - [OPEN](#open-4)
+      - [FILTERED](#filtered-4)
+    - [UDP scan](#udp-scan)
+      - [CLOSED](#closed-5)
+      - [OPEN](#open-5)
+      - [FILTERED](#filtered-5)
+  - [问题及解决](#问题及解决)
+  - [参考资料](#参考资料)
 
 # CHAP0x05 基于Scapy编写端口扫描器
 ## 实验目的
@@ -383,6 +415,7 @@ sudo nmap -sU -p 53 172.16.111.145
 2. 运行代码时`Open`状态没有对应的输出，且代码没有错误
 
     原因：`TCP`扫描重复使用80端口，`Filtered`状态转至`Open`状态时要更改防火墙和监听状态两处，使用`ufw disable`只改变了一处
+    
     解决：执行代码
     `sudo ufw disable`
     `sudo systemctl stop apache2`
@@ -397,3 +430,5 @@ sudo nmap -sU -p 53 172.16.111.145
 [4] [port-scanning-using-scapy](https://resources.infosecinstitute.com/topic/port-scanning-using-scapy/)
 
 [5] [nmap命令参数](https://nmap.org/book/man-host-discovery.html)
+
+[6] [18信安前辈的实验报告](https://github.com/CUCCS/2020-ns-public-kate123wong/tree/chap0x05)
