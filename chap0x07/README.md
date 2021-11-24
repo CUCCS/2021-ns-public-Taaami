@@ -1,3 +1,62 @@
+- [CHAP0x07 Web 应用漏洞攻防](#chap0x07-web-应用漏洞攻防)
+  - [实验目的](#实验目的)
+  - [实验环境](#实验环境)
+  - [实验要求](#实验要求)
+  - [实验准备](#实验准备)
+    - [WebGoat 配置](#webgoat-配置)
+  - [实验过程](#实验过程)
+    - [WebGoat 7.1](#webgoat-71)
+      - [General](#general)
+        - [HTTP Basic](#http-basic)
+      - [Access Control Flaws](#access-control-flaws)
+        - [Using an Access Control Matrix](#using-an-access-control-matrix)
+      - [Authentication Flaws](#authentication-flaws)
+        - [Password Strength](#password-strength)
+        - [Forgot Password](#forgot-password)
+      - [Code Quality](#code-quality)
+        - [Discover Clues in the HTML](#discover-clues-in-the-html)
+      - [Concurrency](#concurrency)
+        - [Thread Safety Problems](#thread-safety-problems)
+        - [Shopping Cart Concurrency Flaw](#shopping-cart-concurrency-flaw)
+      - [Injection Flaws](#injection-flaws)
+        - [Command Injection](#command-injection)
+        - [Numeric SQL Injection](#numeric-sql-injection)
+        - [Log Spoofing](#log-spoofing)
+        - [XPATH Injection](#xpath-injection)
+        - [String SQL Injection](#string-sql-injection)
+      - [Insecure Storage](#insecure-storage)
+        - [Encoding Basics](#encoding-basics)
+    - [WebGoat 8.0](#webgoat-80)
+      - [General](#general-1)
+        - [HTTP Basics](#http-basics)
+      - [Authentication Flaws](#authentication-flaws-1)
+        - [Secure Passwords](#secure-passwords)
+      - [Cross-Site Scripting(XSS)](#cross-site-scriptingxss)
+        - [Cross Site Scripting](#cross-site-scripting)
+        - [Cross Site Scripting(stored)](#cross-site-scriptingstored)
+      - [Insecure Communication](#insecure-communication)
+        - [Insecure Login](#insecure-login)
+    - [Juice Shop](#juice-shop)
+      - [Broken Access Control](#broken-access-control)
+        - [Admin Section](#admin-section)
+        - [Five-Star Feedback](#five-star-feedback)
+      - [Cryptographic Issues](#cryptographic-issues)
+        - [Weird Crypto](#weird-crypto)
+      - [Injection](#injection)
+        - [Login Admin](#login-admin)
+      - [Miscellaneous](#miscellaneous)
+        - [Bully Chatbot](#bully-chatbot)
+        - [Privacy Policy](#privacy-policy)
+        - [Score Board](#score-board)
+      - [Security Misconfiguration](#security-misconfiguration)
+        - [Error Handing](#error-handing)
+      - [Sensitive Data Exposure](#sensitive-data-exposure)
+        - [Confidential Document](#confidential-document)
+      - [XSS](#xss)
+        - [Bonus Payload](#bonus-payload)
+        - [DOM XSS](#dom-xss)
+  - [问题及解决](#问题及解决)
+  - [参考资料](#参考资料)
 # CHAP0x07 Web 应用漏洞攻防
 ## 实验目的
 - 了解常见 Web 漏洞训练平台；
@@ -84,6 +143,39 @@
 - 左侧进入`purchase`，右侧`update`，左侧再`confirm`，成功
   
   ![Cart Concurrency](./img/webgoat7.1/shoppingcart.png)
+#### Injection Flaws
+##### Command Injection
+- 原理是在正常的参数提交过程中，添加恶意代码，代码被当成参数正常提交，但是在这个过程中被执行，从而实现攻击
+- 发现了两种办法，但原理相同
+  - 用`Webscarab`工具进行抓包，对`POST`包进行改写，添加`"& ps -ef"`
+  
+    ![添加命令](./img/webgoat7.1/command.png)
+  - 再前端源代码中添加`"& ps -ef"`，然后再点击`view`提交
+
+    ![更改html](./img/webgoat7.1/htmlsolve.png)
+##### Numeric SQL Injection
+- 查询语句是`SELECT * FROM weather_data WHERE station = [station]`,目的是通过更改`[station]`部分实现显示所有结果
+- 使用`Webscarab`抓包然后对包进行修改，加入`or 1=1`
+  
+    ![注入语句](./img/webgoat7.1/sqlinject.png)
+- 重新发包，成功显示所有结果
+
+    ![注入成功](./img/webgoat7.1/sqlsuccess.png)
+##### Log Spoofing
+- 根据题目名字可知是从日志入手,题目提示下面的灰色框是日志信息，所以目的是再日志中显示`admin`身份登陆成功
+- 在用户名中注入语句`%0d%0aLogin succeeded for username:admin`,成功
+  
+    ![日志注入](./img/webgoat7.1/logspoofing.png)
+##### XPATH Injection
+- `XPath` 即为 `XML` 路径语言，是一门在`XML`文档中查找信息的语言。`XPath` 基于 `XML` 的树状结构，有不同类型的节点，包括元素节点，属性节点和文本节点，提供在数据结构树中找寻节点的能力，可用来在 `XML` 文档中对元素和属性进行遍历。`XPath` 使用路径表达式来选取 `XML` 文档中的节点或者节点集。
+- 在用户名处注入`' or 1=1 or 'a'='a`，成功
+  
+    ![xpath注入](./img/webgoat7.1/xpath.png)
+##### String SQL Injection
+- 输入`Smith`观察`SQL`查询语句，找到注入方法`SELECT * FROM user_data WHERE last_name = '[input]'`，通过更改`[input]`实现注入，主要是最后的那个单引号要注释掉
+- 查询框内输入`Smith ' or 1=1 --`，成功
+
+    ![字符串注入](./img/webgoat7.1/string.png)
 #### Insecure Storage
 ##### Encoding Basics
 - 讲了常见的编码基础,以及是否可以被解密
@@ -202,6 +294,19 @@
 - 任务完成
   
   ![DOM XSS](./img/juiceshop/XSS.png)
+## 问题及解决
+1. `Command Injection`这个实验中，第一次没有成功
+   - 原因：在`F12`中直接修改信息，并没有达到修改包的信息的作用
+   - 解决：虽然改了请求信息，但是新旧包对比发现，`URL`根本没有改变；最后采用`webscarab`工具修改包的信息。
+
+    ![命令注入失败](./img/commanderror.png)
+2. `Webscarab`和`Burpsuite`工具抓不到包(卡了好久...救命)
+   - 原因：火狐浏览器没有配置代理
+   - 解决：设置浏览器的端口为`8080`，设置浏览器代理配置
+
+    ![proxy.allow](./img/proxy.png)
+
+    ![network.settings](./img/firefox.png)
 ## 参考资料
 
 [1] [WebGoat中文手册.pdf](https://max.book118.com/html/2017/1126/141622436.shtm)
@@ -211,3 +316,7 @@
 [3] [WebGoat8 M17 XSS 答案、题解](https://www.pianshen.com/article/1142906991/)
 
 [4] [WebGoat系列实验Cross-Site Scripting (XSS)](https://www.cnblogs.com/yangmzh3/p/7542018.html)
+
+[5] [WebGoat学习笔记（七）——Command Injection](https://blog.csdn.net/moonhedgehog/article/details/6031853)
+
+[6] [WebGoat Command Injection sample](https://blog.csdn.net/kezhen/article/details/22977741)
