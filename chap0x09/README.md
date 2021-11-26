@@ -140,6 +140,46 @@
 - 防火墙差别
   
   ![对比](./img/vs.png)
+### （实验思考题）使用`Suricata`代替`Snort`， 重复本实验。
+- 下载安装`Suricata`
+  ```shell
+  VER=6.0.4  # 版本号
+  wget "http://www.openinfosecfoundation.org/download/suricata-$VER.tar.gz" 
+  tar -xvzf "suricata-$VER.tar.gz" 
+  cd "suricata-$VER" 
+  ```
+- 修改配置文件(本设置不需要修改)，启动`Suricata`
+  ```shell
+  # 启用suricata
+  suricata -v -c /etc/suricata/suricata.yaml -i eth0
+  ```
+- 结果和日志在目录`/var/log/suricata/`中
+  ```shell
+  # fast.log 输出报警信息
+  # eve.json 数据详情
+  # stats.log 
+  # suricata.log
+  ```
+- `cat eve.json`查看抓包结果
+
+  ![eve.json](./img/eve.png)
+- 自定义抓包规则(实验三)
+  ```shell
+  # 新建自定义规则文件
+  cd /etc/suricata/rules/
+  touch test.rules
+
+  # 添加自定义规则
+  alert tcp any any -> any 80 (msg:"Test rule"; content:"hello";threshold:type limit, track by_src, count 1, seconds 60; sid:23300006; rev:1;)
+
+  # 启用规则
+  sudo vim /etc/suricata/suricata.yaml
+  suricata -v -c /etc/suricata/suricata.yaml -i eth0
+  ```
+
+  ![启用规则](./img/testrules.png)
+- 此时进行抓包，可以看到产生了一次自定义警报（60s内仅报警一次）
+
 ## 问题及解决
 1. `IDS`与防火墙的联动防御方式相比IPS方式防御存在哪些缺陷？是否存在相比较而言的优势？
    >IDS/IPS概述
